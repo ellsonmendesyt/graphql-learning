@@ -4,30 +4,66 @@ const {buildSchema}= require('graphql');
 const {graphqlHTTP}=require('express-graphql')
 
 
-/*======================================================
-schema containes a collection of type definitions
-type is a collection of fields
-the type define the shape of the data which wil be returned
-=========================================================*/
+
 
 const schema=buildSchema(`
   type Query{   
-   description:String
-   price: Float
+   products:[Product]
+   orders:[Order]   
+  }
+
+  type Product{
+    id:ID!
+    description:String!
+    price:Float!
+    reviews:[Review]
+  }
+
+  type Review{
+    rating:Int!,
+    comment:String
+  }
+
+  type Order{
+    date:String!
+    subtotal:Float!
+    items:[OrderItem]
+  }
+
+  type OrderItem{
+    product:Product!,
+    quantity:Int!
   }
 `);
 
 
 
-/*======================================================
-By using graphqlHTTP middleware we can make 
-express respond to graphql queries
-========================================================*/
 
-// will hold the values corresponding to our schema 
 const root={
- description: 'Red Shoe',
- price:42.12,
+  products:[
+    {
+      id:'redshoe',
+      description:'Red shoe',
+      price:42.12
+    },
+    {
+      id:'bluejean',
+      description:'Blue Jeans',
+      price:55.55
+    }
+  ],
+  orders:[
+    {
+      date:'2005-05-06',
+      subtotal:90.22,
+      items:[
+        {
+          product:{ id:'redshoe', description:'Old Red Shoe', price:45.11},
+          quantity:2
+        }
+      ]
+    }
+  ]
 };
 
 const app=express();
@@ -43,3 +79,17 @@ app.use(`/graphql`,graphqlHTTP({
 app.listen(3000, ()=>{
   console.log('ouvindo a porta 3000');
 })
+
+
+/*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      QUERIES THE SERVER SUPPORTS
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+products: [Product]
+orders: [Order]
+
+
+
+
+
+*/
