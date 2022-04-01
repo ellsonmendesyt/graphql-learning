@@ -2,16 +2,14 @@ const express = require('express');
 
 const {buildSchema}= require('graphql');
 const {graphqlHTTP}=require('express-graphql')
+const {makeExecutableSchema} = require('@graphql-tools/schema')
 
-
-
-
-const schema=buildSchema(`
+const schemaText=`
   type Query{   
    products:[Product]
    orders:[Order]   
   }
-
+ 
   type Product{
     id:ID!
     description:String!
@@ -34,7 +32,13 @@ const schema=buildSchema(`
     product:Product!,
     quantity:Int!
   }
-`);
+`;
+
+const schema= makeExecutableSchema({
+  typeDefs:[schemaText]
+})
+
+
 
 
 
